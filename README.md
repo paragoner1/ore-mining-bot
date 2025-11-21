@@ -8,6 +8,42 @@
 
 ---
 
+## 💼 Professional Services – Limited Spots
+
+This bot is fully open source and free to use.
+
+The real value is in optimization for your specific capital, RPC setup, and risk tolerance.
+
+I offer paid services for serious miners:
+
+### 🚀 Complete Setup & Optimization – $1,997
+- Custom configuration for your wallet and capital allocation
+- RPC endpoint optimization and testing
+- Performance tuning and competitive analysis
+- 2 weeks of follow-up support
+
+### ⚡ Monthly Optimization & Support – $497/month
+- Ongoing strategy adjustments
+- Priority support (24hr response)
+- Performance monitoring and reporting
+- Direct Telegram/Discord access
+
+### 🏢 Enterprise / Multi-Wallet – Starting at $10k
+- Custom EV strategies
+- Multi-wallet orchestration
+- Advanced monitoring dashboards
+- White-label solutions
+
+Limited to 10 clients at a time.
+
+📧 paragoner.dev@gmail.com  
+🐦 [@paragoner1](https://twitter.com/paragoner1)  
+📅 Book a call: [CALENDLY_LINK_HERE]
+
+**🎁 Early access:** First 5 clients pay $1,497 (save $500)
+
+---
+
 ## 🎯 Overview
 
 This is a production-grade automated mining bot for Solana's ORE V2 protocol—a competitive proof-of-work mining game where miners stake SOL on a 5×5 grid every 60 seconds. One block wins, and SOL redistributes from losers to winners.
