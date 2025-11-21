@@ -1,6 +1,6 @@
-# ORE V2 World-Class Mining Bot
+# ORE V3 Mining Bot
 
-**A high-performance Solana DeFi trading bot for the ORE V2 mining protocol**
+**A high-performance Solana mining bot for the ORE V3 protocol**
 
 [![Status](https://img.shields.io/badge/Status-Production-success)]()
 [![Platform](https://img.shields.io/badge/Platform-Solana-blueviolet)]()
@@ -46,7 +46,7 @@ Limited to 10 clients at a time.
 
 ## 🎯 Overview
 
-This is a production-grade automated mining bot for Solana's ORE V2 protocol—a competitive proof-of-work mining game where miners stake SOL on a 5×5 grid every 60 seconds. One block wins, and SOL redistributes from losers to winners.
+This is a production-grade automated mining bot for Solana's ORE V3 protocol—a competitive proof-of-work mining game where miners stake SOL on a 5×5 grid every 60 seconds. One block wins, and SOL redistributes from losers to winners.
 
 **The Challenge:** Competing with whales deploying 10-100x more capital in a zero-sum game.
 
@@ -347,7 +347,7 @@ Comprehensive technical documentation available in the `docs/` directory:
 
 ## ⚠️ Disclaimer
 
-This is educational/portfolio software. ORE V2 mining is speculative and competitive. Performance varies with market conditions and SOL/ORE price ratios. Use at your own risk.
+This is educational/portfolio software. ORE V3 mining is speculative and competitive. Performance varies with market conditions and SOL/ORE price ratios. Use at your own risk.
 
 ---
 
