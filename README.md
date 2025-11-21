@@ -30,11 +30,11 @@ I offer paid services for serious miners:
 
 ### 🏢 Multi-Wallet & Enterprise – Starting at $8k
 - Multi-wallet orchestration (5-20+ independent instances)
-- Custom strategy tuning for your capital and risk profile
-- RPC infrastructure setup with redundancy and failover
-- Integration with analytics tools (refinore.com, etc.)
+- Custom strategy development for your capital and risk profile
+- Advanced RPC infrastructure with redundancy and failover
+- Performance optimization and ongoing tuning
 - Priority support with <2hr response time
-- Ongoing optimization as market conditions evolve
+- Dedicated communication channel (Telegram/Discord)
 
 Limited to 10 clients at a time.
 
@@ -43,8 +43,6 @@ Limited to 10 clients at a time.
 📅 Book a call: [CALENDLY_LINK_HERE]
 
 **🎁 Early access:** First 5 clients pay $1,497 (save $500)
-
-**📊 Analytics:** For monitoring and dashboards, I recommend [refinore.com](https://refinore.com) - best-in-class ORE analytics. I can help you set it up.
 
 ---
 
