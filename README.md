@@ -40,7 +40,7 @@ Limited to 10 clients at a time.
 
 📧 paragoner.dev@gmail.com  
 𝕏 [@paragoner1](https://x.com/paragoner1)  
-📅 Book a call: [CALENDLY_LINK_HERE]
+📅 Book a call: [calendly.com/paragoner-dev/30min](https://calendly.com/paragoner-dev/30min)
 
 **🎁 Early access:** First 5 clients pay $1,497 (save $500)
 
