@@ -8,43 +8,63 @@
 
 ---
 
-## 💼 Professional Services – Limited to 10 Clients
+## 💼 Subscription Plans
 
 Paragoner ORE Miner - battle-tested over 1000+ production rounds with 99.8% uptime and 1.2s confirmations.
 
 **Public:** Documentation and technical architecture  
 **Private:** Production implementation and algorithms
 
-I offer bot access with professional setup for serious miners:
+Choose the plan that matches your operation:
 
-### 🚀 Bot Access + Complete Setup – $1,997
-- Full production bot with all features and optimizations
-- Custom configuration for your capital and risk profile
-- RPC infrastructure setup with redundancy
-- Performance tuning and competitive analysis
-- 2 weeks of follow-up support
+### 🥉 Starter – $149/month
+**For technical miners who prefer self-service**
 
-### ⚡ Bot Access + Monthly Support – $497/month
-- Ongoing strategy adjustments as market evolves
-- Priority Telegram support (24hr response)
-- New optimizations and features first
-- Performance monitoring and assistance
+- ✅ Full bot access (all core features)
+- ✅ 1 wallet supported
+- ✅ Community Discord support
+- ✅ Comprehensive setup documentation
+- ✅ Updates and bug fixes
 
-### 🏢 Multi-Wallet & Enterprise – Starting at $8k
-- Multi-wallet orchestration (5-20+ independent instances)
-- Custom strategy development for your capital and risk profile
-- Advanced RPC infrastructure with redundancy and failover
-- Performance optimization and ongoing tuning
-- Priority support with <2hr response time
-- Dedicated communication channel (Telegram/Discord)
+*Perfect for developers comfortable with independent setup using CLI/Rust*
 
-Limited to 10 clients at a time.
+---
+
+### 🥈 Pro – $399/month
+**For professional miners scaling operations**
+
+- ✅ Everything in Starter
+- ✅ Up to 3 wallets supported
+- ✅ Priority Telegram support (24hr response)
+- ✅ 1-hour onboarding call
+- ✅ Custom RPC infrastructure guidance
+- ✅ Monthly performance review
+
+*Perfect for serious miners running multiple wallets with expert guidance*
+
+---
+
+### 🥇 Enterprise – $1,499/month
+**For large-scale operations requiring dedicated support**
+
+- ✅ Everything in Pro
+- ✅ Unlimited wallets with orchestration
+- ✅ White-glove turnkey deployment
+- ✅ Custom strategy tuning for your risk profile
+- ✅ Direct priority communication channel
+- ✅ Weekly performance reviews
+- ✅ Custom feature development
+
+*Perfect for institutional-grade deployments (5+ wallets) or operations-focused teams*
+
+---
+
+**🎁 Launch Special:** First 10 subscribers get 50% off first month  
+**🔒 Quality Guarantee:** Limited to 100 total users to ensure exceptional support quality
 
 📧 paragoner.dev@gmail.com  
 𝕏 [@paragoner1](https://x.com/paragoner1)  
 📅 Book a call: [calendly.com/paragoner-dev/30min](https://calendly.com/paragoner-dev/30min)
-
-**🎁 Early access:** First 5 clients pay $1,497 (save $500)
 
 ---
 
