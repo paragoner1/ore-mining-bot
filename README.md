@@ -28,11 +28,13 @@ I offer paid services for serious miners:
 - Performance monitoring and reporting
 - Direct Telegram/Discord access
 
-### 🏢 Enterprise / Multi-Wallet – Starting at $10k
-- Custom EV strategies
-- Multi-wallet orchestration
-- Advanced monitoring dashboards
-- White-label solutions
+### 🏢 Multi-Wallet & Enterprise – Starting at $8k
+- Multi-wallet orchestration (5-20+ independent instances)
+- Custom strategy tuning for your capital and risk profile
+- RPC infrastructure setup with redundancy and failover
+- Integration with analytics tools (refinore.com, etc.)
+- Priority support with <2hr response time
+- Ongoing optimization as market conditions evolve
 
 Limited to 10 clients at a time.
 
@@ -41,6 +43,8 @@ Limited to 10 clients at a time.
 📅 Book a call: [CALENDLY_LINK_HERE]
 
 **🎁 Early access:** First 5 clients pay $1,497 (save $500)
+
+**📊 Analytics:** For monitoring and dashboards, I recommend [refinore.com](https://refinore.com) - best-in-class ORE analytics. I can help you set it up.
 
 ---
 
