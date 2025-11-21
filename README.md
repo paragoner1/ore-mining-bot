@@ -39,7 +39,7 @@ I offer paid services for serious miners:
 Limited to 10 clients at a time.
 
 📧 paragoner.dev@gmail.com  
-🐦 [@paragoner1](https://twitter.com/paragoner1)  
+𝕏 [@paragoner1](https://x.com/paragoner1)  
 📅 Book a call: [CALENDLY_LINK_HERE]
 
 **🎁 Early access:** First 5 clients pay $1,497 (save $500)
