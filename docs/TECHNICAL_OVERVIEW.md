@@ -1,14 +1,14 @@
-# Technical Overview: ORE V2 Mining Bot
+# Technical Overview: ORE V3 Mining Bot
 
 ## Executive Summary
 
-A production-grade Solana trading bot implementing advanced optimization techniques for the ORE V2 competitive mining protocol. This system demonstrates sophisticated real-time decision-making, adaptive algorithms, and high-performance blockchain interaction patterns, achieving 99.8% uptime and sub-2-second execution cycles in a zero-sum competitive environment.
+A production-grade Solana trading bot implementing advanced optimization techniques for the ORE V3 competitive mining protocol. This system demonstrates sophisticated real-time decision-making, adaptive algorithms, and high-performance blockchain interaction patterns, achieving 99.8% uptime and sub-2-second execution cycles in a zero-sum competitive environment.
 
 ---
 
 ## Problem Domain
 
-ORE V2 is a competitive proof-of-work mining game on Solana where:
+ORE V3 is a competitive proof-of-work mining game on Solana where:
 - Every 60 seconds, a new mining round begins
 - Miners stake SOL on a 5×5 grid (25 blocks)
 - One block wins randomly (weighted by total SOL deployed)
