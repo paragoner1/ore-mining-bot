@@ -8,25 +8,27 @@
 
 ---
 
-## 💼 Professional Services – Limited Spots
+## 💼 Professional Services – Limited to 10 Clients
 
-This bot is fully open source and free to use.
+Paragoner ORE Miner - battle-tested over 1000+ production rounds with 99.8% uptime and 1.2s confirmations.
 
-The real value is in optimization for your specific capital, RPC setup, and risk tolerance.
+**Public:** Documentation and technical architecture  
+**Private:** Production implementation and algorithms
 
-I offer paid services for serious miners:
+I offer bot access with professional setup for serious miners:
 
-### 🚀 Complete Setup & Optimization – $1,997
-- Custom configuration for your wallet and capital allocation
-- RPC endpoint optimization and testing
+### 🚀 Bot Access + Complete Setup – $1,997
+- Full production bot with all features and optimizations
+- Custom configuration for your capital and risk profile
+- RPC infrastructure setup with redundancy
 - Performance tuning and competitive analysis
 - 2 weeks of follow-up support
 
-### ⚡ Monthly Optimization & Support – $497/month
-- Ongoing strategy adjustments
-- Priority support (24hr response)
-- Performance monitoring and reporting
-- Direct Telegram/Discord access
+### ⚡ Bot Access + Monthly Support – $497/month
+- Ongoing strategy adjustments as market evolves
+- Priority Telegram support (24hr response)
+- New optimizations and features first
+- Performance monitoring and assistance
 
 ### 🏢 Multi-Wallet & Enterprise – Starting at $8k
 - Multi-wallet orchestration (5-20+ independent instances)
