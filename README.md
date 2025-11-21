@@ -1,6 +1,6 @@
-# ORE V3 Mining Bot
+# Paragoner ORE Miner
 
-**A high-performance Solana mining bot for the ORE V3 protocol**
+**A high-performance, battle-tested mining bot for Solana's ORE V3 protocol**
 
 [![Status](https://img.shields.io/badge/Status-Production-success)]()
 [![Platform](https://img.shields.io/badge/Platform-Solana-blueviolet)]()
