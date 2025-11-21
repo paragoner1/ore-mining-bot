@@ -97,19 +97,26 @@ The bot maintains a rolling 125-round history (≈2.3 hours) of miner density an
 // Calculate 25th and 75th percentiles from history
 let (p25, p75) = calculate_percentiles(last_125_rounds.density);
 
-// 3-tier stake system
+// 3-tier stake system based on user's baseline preference
+// User sets baseline in config (default: 0.010 SOL)
+let baseline = config.baseline_stake_per_block;
+
 if current_density > p75:
-    stake = 0.0125 SOL/block  // ELEVATED (top 25% rounds)
+    stake = baseline × 1.25  // ELEVATED (25% increase for best rounds)
 elif current_density > p25:
-    stake = 0.010 SOL/block   // BASELINE (middle 50%)
+    stake = baseline         // BASELINE (user's configured preference)
 else:
-    stake = 0.006 SOL/block   // REDUCED (bottom 25%, whale-heavy)
+    stake = baseline × 0.6   // REDUCED (40% decrease for whale-heavy rounds)
+
+// Example with baseline = 0.010:
+// ELEVATED: 0.0125, BASELINE: 0.010, REDUCED: 0.006
 ```
 
 **Key Properties:**
-- **Self-adapting:** As market conditions change, thresholds automatically adjust
+- **User-configurable baseline:** Set your comfortable stake amount based on capital and risk tolerance
+- **Self-adapting thresholds:** As market conditions change, percentile boundaries automatically adjust
+- **Proportional scaling:** All tiers scale with your baseline (1.25×, 1.0×, 0.6×)
 - **Relative competition:** Reacts to competition level relative to recent history
-- **No manual tuning:** Zero configuration required as market evolves
 - **Statistically grounded:** Uses proven percentile-based decision boundaries
 
 #### History Persistence
