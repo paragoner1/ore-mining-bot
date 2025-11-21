@@ -71,3 +71,7 @@ build/
 
 # Wallet backup files (contain private keys)
 WALLET_*_BACKUP.md
+
+# Client configurations and license registry (NEVER COMMIT)
+client_configs/
+license_registry.csv

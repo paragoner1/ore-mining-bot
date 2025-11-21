@@ -1,0 +1,106 @@
+PARAGONER ORE MINER - PROPRIETARY SOFTWARE LICENSE AGREEMENT
+
+Copyright © 2025 Paragoner. All Rights Reserved.
+
+═══════════════════════════════════════════════════════════════════════
+
+1. LICENSE GRANT
+
+This software ("Paragoner ORE Miner") is licensed, not sold. By using this
+software, you are granted a limited, non-exclusive, non-transferable, 
+revocable license to use the software subject to the terms and conditions
+set forth below.
+
+2. PERMITTED USE
+
+You may:
+  - Use this software for your personal mining operations
+  - Run multiple instances for wallets you personally control
+  - Modify configuration files for your specific use case
+
+3. RESTRICTIONS
+
+You may NOT:
+  - Share, distribute, sublicense, or resell this software
+  - Provide access to this software to any third party
+  - Use this code to build competing products or services
+  - Reverse engineer the algorithms for competitive purposes
+  - Publish or disclose implementation details publicly
+  - Remove or modify this license or copyright notices
+
+4. SUBSCRIPTION REQUIREMENT
+
+This license is valid only while your subscription is active and paid.
+Upon cancellation or non-payment:
+  - This license terminates immediately
+  - You must cease all use of the software
+  - You must delete all copies in your possession
+
+5. INTELLECTUAL PROPERTY
+
+All algorithms, code, documentation, and implementation details remain
+the exclusive intellectual property of Paragoner. No ownership rights
+are transferred under this license.
+
+6. CONFIDENTIALITY
+
+The software contains proprietary trade secrets. You agree to:
+  - Keep all implementation details confidential
+  - Not disclose algorithms or methods to third parties
+  - Not post code snippets or detailed descriptions publicly
+
+7. UPDATES AND SUPPORT
+
+  - Updates are provided only to active subscribers
+  - Support is provided per your subscription tier
+  - Paragoner reserves the right to modify features at any time
+
+8. TERMINATION
+
+Paragoner may terminate this license immediately if you:
+  - Violate any terms of this agreement
+  - Share the software without authorization
+  - Use the software for competing services
+  - Fail to maintain an active subscription
+
+Upon termination, you must immediately:
+  - Stop using the software
+  - Delete all copies
+  - Destroy any derivative works
+
+9. WARRANTY DISCLAIMER
+
+THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+PARAGONER DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+AND NON-INFRINGEMENT.
+
+10. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL PARAGONER BE LIABLE FOR ANY DAMAGES (INCLUDING LOST
+PROFITS, LOST DATA, OR TRADING LOSSES) ARISING FROM THE USE OR INABILITY
+TO USE THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+11. MINING RISKS
+
+You acknowledge that:
+  - Cryptocurrency mining involves financial risk
+  - Past performance does not guarantee future results
+  - You are solely responsible for your mining decisions
+  - Paragoner is not liable for any mining losses
+
+12. GOVERNING LAW
+
+This agreement is governed by the laws of the jurisdiction in which
+Paragoner operates, without regard to conflict of law principles.
+
+═══════════════════════════════════════════════════════════════════════
+
+QUESTIONS OR LICENSE VIOLATIONS:
+Contact: paragoner.dev@gmail.com
+
+BY USING THIS SOFTWARE, YOU ACKNOWLEDGE THAT YOU HAVE READ, UNDERSTOOD,
+AND AGREE TO BE BOUND BY THE TERMS OF THIS LICENSE AGREEMENT.
+
+═══════════════════════════════════════════════════════════════════════
+
