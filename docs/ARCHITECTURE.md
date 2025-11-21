@@ -44,23 +44,23 @@ This bot is architected around three core principles:
 
 **Critical Timing Logic:**
 ```rust
-// Wait until T-3s for freshest grid data
+// Wait until optimal window for freshest grid data
 let seconds_remaining = calculate_time_remaining();
-let wait_to_grid = seconds_remaining.saturating_sub(GRID_TARGET); // GRID_TARGET = 3
+let wait_to_grid = seconds_remaining.saturating_sub(GRID_TARGET);
 tokio::time::sleep(Duration::from_secs(wait_to_grid)).await;
 
-// Fetch grid at T-3s
+// Fetch grid at optimal timing
 let grid_state = executor.fetch_grid_state().await?;
 
-// Execute immediately (T-2.5s to T-2s)
+// Execute with calculated allocations
 let result = optimizer.calculate_optimal_allocations(&grid_state).await;
 executor.execute_with_failover(&allocations, current_round).await?;
 ```
 
-**Design Decision:** Why wait until T-3s?
-- Earlier fetches (T-10s, T-15s) lead to stale data
+**Design Decision:** Why aggressive timing?
+- Earlier fetches lead to stale data
 - Other miners can deploy after your data snapshot
-- T-3s provides 1.9s buffer for: fetch (0.3s) + calculate (0.1s) + execute (0.3s) + confirm (1.2s)
+- Late timing provides buffer for: fetch + calculate + execute + confirm
 - Maximizes information freshness while maintaining safety margin
 
 ---
@@ -126,26 +126,25 @@ let signature = send_transaction_with_config(
 ```rust
 fn baseline_kicker_allocation(&mut self, grid_state: &GridState) -> Result<HashMap<u8, f64>> {
     // Step 1: Calculate current competition level
-    let total_sol = grid_state.deployed.iter().sum::<u64>() as f64 / 1e9;
-    let total_miners = grid_state.count.iter().sum::<u64>();
-    let miner_density = total_miners as f64 / total_sol;
+    let total_sol = calculate_total_deployment(grid_state);
+    let total_miners = calculate_total_miners(grid_state);
+    let miner_density = calculate_density(total_miners, total_sol);
     
     // Step 2: Get dynamic thresholds from history
-    let (p25, p75) = self.saturation_analyzer.get_density_thresholds();
+    let (low_threshold, high_threshold) = self.saturation_analyzer.get_density_thresholds();
     
-    // Step 3: Determine stake tier
-    let stake_per_block = if miner_density > p75 {
-        0.0125  // ELEVATED (top 25% value rounds)
-    } else if miner_density > p25 {
-        0.010   // BASELINE (middle 50%)
-    } else {
-        0.006   // REDUCED (bottom 25%, whale-heavy)
-    };
+    // Step 3: Determine stake tier based on adaptive thresholds
+    let stake_per_block = determine_stake_tier(
+        miner_density, 
+        low_threshold, 
+        high_threshold,
+        config.baseline_stake
+    );
     
-    // Step 4: Select best 20 blocks by EV
+    // Step 4: Select optimal blocks by EV
     let block_selections = self.saturation_analyzer.select_optimal_blocks(
         grid_state,
-        20,
+        target_block_count,
         stake_per_block,
     );
     
@@ -162,7 +161,7 @@ fn baseline_kicker_allocation(&mut self, grid_state: &GridState) -> Result<HashM
 **Design Decision:** 
 - Single-pass algorithm (no iteration needed)
 - Deterministic given inputs (reproducible results)
-- No external dependencies (ORE price, API calls)
+- No external dependencies (no API calls required)
 
 ---
 
@@ -187,57 +186,43 @@ pub struct SaturationAnalyzer {
 
 ```rust
 pub fn get_density_thresholds(&self) -> (f64, f64) {
-    if self.density_history.len() < 20 {
-        return (500.0, 700.0);  // Static fallback during warm-up
+    if self.density_history.len() < MIN_HISTORY_SIZE {
+        return DEFAULT_THRESHOLDS;  // Static fallback during warm-up
     }
     
     let mut sorted: Vec<f64> = self.density_history.iter().copied().collect();
     sorted.sort_by(|a, b| a.partial_cmp(b).unwrap());
     
-    let index_25th = (sorted.len() as f64 * 0.25) as usize;
-    let index_75th = (sorted.len() as f64 * 0.75) as usize;
+    let low_percentile_index = calculate_percentile_index(sorted.len(), LOW_PERCENTILE);
+    let high_percentile_index = calculate_percentile_index(sorted.len(), HIGH_PERCENTILE);
     
-    (sorted[index_25th], sorted[index_75th])
+    (sorted[low_percentile_index], sorted[high_percentile_index])
 }
 ```
 
-**EV Calculation (Simplified):**
+**EV Calculation:**
 
 ```rust
 pub fn select_optimal_blocks(&self, grid_state: &GridState, num_blocks: usize, our_stake: f64) -> Vec<u8> {
     let mut block_scores = Vec::new();
     
-    for block_id in 0..25 {
-        let block_sol = grid_state.deployed[block_id] as f64 / 1e9;
-        let block_miners = grid_state.count[block_id];
+    for block_id in 0..TOTAL_BLOCKS {
+        let block_sol = extract_block_deployment(grid_state, block_id);
+        let block_miners = extract_block_miners(grid_state, block_id);
         
         // Calculate EV
-        let win_prob = 0.04;  // 1/25
-        let our_share = our_stake / (block_sol + our_stake);
-        let losing_pool = total_sol - block_sol + (our_stake * 19.0);
-        let sol_reward = our_share * losing_pool * 0.9;
-        let ore_reward = 1.0 * self.ore_price_sol;  // Simplified
-        let net_profit = sol_reward + ore_reward - (our_stake * 20.0);
+        let win_prob = calculate_win_probability();
+        let our_share = calculate_share(our_stake, block_sol);
+        let losing_pool = calculate_losing_pool(total_sol, block_sol, cross_stakes);
+        let sol_reward = our_share * losing_pool * POOL_DISTRIBUTION_RATE;
+        let ore_reward = calculate_ore_value(self.ore_price_sol);
+        let net_profit = sol_reward + ore_reward - total_stake_cost;
         let ev = win_prob * net_profit;
         
-        // Apply whale concentration penalty
-        let sol_per_miner = if block_miners > 0 {
-            block_sol / block_miners as f64
-        } else {
-            f64::MAX
-        };
+        // Apply miner concentration analysis
+        let concentration_score = analyze_concentration(block_miners, block_sol);
         
-        let penalty = if block_miners == 0 {
-            0.1   // Empty blocks are suspicious
-        } else if sol_per_miner > 0.01 {
-            0.5   // Whale-dominated
-        } else if sol_per_miner > 0.005 {
-            0.8   // Moderately concentrated
-        } else {
-            1.0   // Well-distributed
-        };
-        
-        let ev_score = ev * penalty;
+        let ev_score = ev * concentration_score;
         block_scores.push((block_id, ev_score));
     }
     
@@ -290,8 +275,8 @@ fn load_history_from_logs(&mut self) -> Result<()> {
 ```rust
 pub struct RpcRateLimiter {
     tokens: Arc<RwLock<f64>>,           // Current token count
-    max_tokens: f64,                     // 30 (burst capacity)
-    refill_rate: f64,                    // 10 per second
+    max_tokens: f64,                     // Burst capacity
+    refill_rate: f64,                    // Sustained rate per second
     last_refill: Arc<RwLock<Instant>>,
 }
 
@@ -315,7 +300,7 @@ pub async fn acquire(&self, cost: f64) -> Result<()> {
         }
         
         // Wait and retry
-        tokio::time::sleep(Duration::from_millis(50)).await;
+        tokio::time::sleep(RETRY_INTERVAL).await;
     }
 }
 ```
@@ -324,7 +309,7 @@ pub async fn acquire(&self, cost: f64) -> Result<()> {
 - Non-blocking: Uses Tokio async/await
 - Fair: FIFO acquisition order
 - Predictable: Deterministic refill rate
-- Tunable: Easy to adjust for different RPC tiers
+- Tunable: Easy to adjust for different RPC service tiers
 
 ---
 
@@ -380,17 +365,17 @@ let seconds_remaining = (slots_remaining as f64 * 0.4) as u64;
 
 ```rust
 let grid_state = match timeout(
-    Duration::from_secs(3),
+    GRID_FETCH_TIMEOUT,
     executor.fetch_grid_state()
 ).await {
     Ok(Ok(grid)) => grid,
     Ok(Err(e)) => {
-        warn!("Grid fetch failed: {}, using random fallback", e);
-        return calculate_allocations_random(grid_state);
+        warn!("Grid fetch failed: {}, using fallback strategy", e);
+        return calculate_allocations_fallback(grid_state);
     }
     Err(_) => {
-        warn!("Grid fetch timeout, using random fallback");
-        return calculate_allocations_random(grid_state);
+        warn!("Grid fetch timeout, using fallback strategy");
+        return calculate_allocations_fallback(grid_state);
     }
 };
 ```

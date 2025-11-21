@@ -29,44 +29,43 @@ ORE V3 is a competitive proof-of-work mining game on Solana where:
 The bot operates on an aggressive timing strategy, fetching data and executing at the last possible moment to minimize information staleness:
 
 ```
-T-20s  → Preflight Check
-         - Fetch Board and Miner state (slow-changing data)
-         - Cache for reuse during execution
-         - Validate miner is current with blockchain round
+Early Round → Preflight Check
+              - Fetch Board and Miner state (slow-changing data)
+              - Cache for reuse during execution
+              - Validate miner is current with blockchain round
 
-T-5s   → Wait for optimal timing window
-         - Monitor blockchain round progression
-         - Calculate precise execution window
+Mid Round   → Wait for optimal timing window
+              - Monitor blockchain round progression
+              - Calculate precise execution window
 
-T-3s   → Grid State Fetch
-         - Fetch all 25 blocks' current competition levels
-         - This is the critical freshness point
-         - 1.9-second safety margin before round end
+Late Round  → Grid State Fetch
+              - Fetch all 25 blocks' current competition levels
+              - Critical freshness point with safety margin
 
-T-2.5s → Decision Engine
-         - Calculate EV for all 25 blocks
-         - Select optimal 20 blocks by EV score
-         - Determine stake amounts based on density thresholds
+Decision    → Decision Engine
+              - Calculate EV for all blocks
+              - Select optimal blocks by EV score
+              - Determine stake amounts based on adaptive thresholds
 
-T-2s   → Transaction Execution
-         - Build atomic transaction (checkpoint + 20 deploys)
-         - Send with skip_preflight for speed
-         - Zero priority fees (validated to be effective)
+Execute     → Transaction Execution
+              - Build atomic transaction (checkpoint + deploys)
+              - Optimized submission for speed
+              - Strategically set priority fees
 
-T-1s   → Confirmation
-         - Average 1.2-second confirmation time
-         - 0.8-1.3s safety margin before round ends
+Confirm     → Confirmation
+              - Sub-2-second average confirmation time
+              - Maintains safety margin before round ends
 ```
 
 **Key Architectural Decisions:**
 
-1. **Data Segregation:** Separate slow-changing (Board/Miner) from fast-changing (Grid) data, caching the former and fetching the latter at T-3s for maximum freshness.
+1. **Data Segregation:** Separate slow-changing (Board/Miner) from fast-changing (Grid) data, caching the former and fetching the latter late in the cycle for maximum freshness.
 
-2. **Atomic Transactions:** Combine checkpoint (miner state update) with deploy (stake) operations to prevent state desync issues that would cause 86-second cycle delays.
+2. **Atomic Transactions:** Combine checkpoint (miner state update) with deploy (stake) operations to prevent state desync issues that would cause extended cycle delays.
 
-3. **Skip Preflight:** Bypass preflight checks to prevent blockhash expiration during simulation, reducing confirmation time from 3.5s to 1.2s.
+3. **Optimized Transaction Submission:** Strategic configuration choices to minimize confirmation latency while maintaining reliability.
 
-4. **Custom RPC Rate Limiter:** Token-bucket algorithm (10 sustained / 30 burst RPS) prevents Helius throttling while maximizing responsiveness.
+4. **Custom RPC Rate Limiter:** Token-bucket algorithm prevents RPC throttling while maximizing responsiveness during execution bursts.
 
 ---
 
@@ -91,31 +90,28 @@ Miner Density = Total Miners ÷ Total SOL Deployed
 
 #### Dynamic Threshold System
 
-The bot maintains a rolling 125-round history (≈2.3 hours) of miner density and calculates percentile thresholds in real-time:
+The bot maintains a rolling historical window of miner density and calculates percentile thresholds in real-time:
 
 ```rust
-// Calculate 25th and 75th percentiles from history
-let (p25, p75) = calculate_percentiles(last_125_rounds.density);
+// Calculate percentile thresholds from historical data
+let (low_threshold, high_threshold) = calculate_percentiles(density_history);
 
-// 3-tier stake system based on user's baseline preference
-// User sets baseline in config (default: 0.010 SOL)
+// Multi-tier stake system based on user's baseline preference
+// User sets baseline in config based on capital and risk tolerance
 let baseline = config.baseline_stake_per_block;
 
-if current_density > p75:
-    stake = baseline × 1.25  // ELEVATED (25% increase for best rounds)
-elif current_density > p25:
-    stake = baseline         // BASELINE (user's configured preference)
+if current_density > high_threshold:
+    stake = baseline × elevated_multiplier  // ELEVATED tier
+elif current_density > low_threshold:
+    stake = baseline                        // BASELINE tier
 else:
-    stake = baseline × 0.6   // REDUCED (40% decrease for whale-heavy rounds)
-
-// Example with baseline = 0.010:
-// ELEVATED: 0.0125, BASELINE: 0.010, REDUCED: 0.006
+    stake = baseline × reduced_multiplier   // REDUCED tier
 ```
 
 **Key Properties:**
 - **User-configurable baseline:** Set your comfortable stake amount based on capital and risk tolerance
 - **Self-adapting thresholds:** As market conditions change, percentile boundaries automatically adjust
-- **Proportional scaling:** All tiers scale with your baseline (1.25×, 1.0×, 0.6×)
+- **Proportional scaling:** All tiers scale with your baseline preference
 - **Relative competition:** Reacts to competition level relative to recent history
 - **Statistically grounded:** Uses proven percentile-based decision boundaries
 
@@ -127,57 +123,48 @@ On startup, the bot parses historical log files to pre-populate the 125-round de
 
 ### Layer 3: EV-Based Block Selection
 
-Rather than simply selecting the 20 blocks with "lowest SOL deployed," the system implements a sophisticated Expected Value (EV) calculation that accounts for:
+Rather than simply selecting blocks with "lowest SOL deployed," the system implements a sophisticated Expected Value (EV) calculation that accounts for:
 
-1. **Win Probability:** 1/25 (4%) for each block
-2. **Our Stake Impact:** How our stakes across ALL blocks affect the losing pool
-3. **SOL Rewards:** Proportional share of 90% of losing pool
-4. **ORE Rewards:** Base 1 ORE + 1/625 chance of motherlode bonus
-5. **Whale Concentration Penalty:** Penalizes blocks with high SOL-per-miner ratios
+1. **Win Probability:** Uniform probability for each block
+2. **Our Stake Impact:** How our stakes across ALL blocks affect the reward pool dynamics
+3. **SOL Rewards:** Proportional share of the redistribution pool
+4. **ORE Rewards:** Base token rewards plus bonus multiplier opportunities
+5. **Whale Concentration Penalty:** Penalizes blocks with unfavorable miner distribution patterns
 
 ```rust
 for each block in grid:
-    // Calculate our share if this block wins
-    our_share = our_stake / (block_sol + our_stake)
+    // Calculate our expected share if this block wins
+    our_share = calculate_share(our_stake, block_sol)
     
-    // Critical insight: Our OTHER stakes become part of losing pool
-    our_stakes_on_other_blocks = (num_blocks - 1) × our_stake
-    losing_pool = total_sol - block_sol + our_stakes_on_other_blocks
+    // Critical insight: Account for cross-block stake interactions
+    losing_pool = calculate_losing_pool(total_sol, block_sol, our_stakes)
     
-    // SOL reward (90% of losing pool goes to winners)
-    sol_reward = our_share × losing_pool × 0.9
+    // SOL reward based on pool redistribution
+    sol_reward = our_share × losing_pool × pool_distribution_rate
     
-    // ORE reward (accounts for split vs WTA + motherlode)
+    // ORE reward (accounts for reward modes and bonuses)
     ore_reward = calculate_ore_value(motherlode_size, ore_price)
     
-    // Net profit (must subtract ALL our stakes, not just this block)
-    net_profit = (sol_reward + ore_reward) - total_our_stake
+    // Net profit accounting for all deployment costs
+    net_profit = (sol_reward + ore_reward) - total_deployment_cost
     
-    // Expected value
-    ev = 0.04 × net_profit
+    // Expected value calculation
+    ev = win_probability × net_profit
     
-    // Apply whale concentration penalty
-    if miners == 0:
-        penalty = 0.1  // Suspicious empty block
-    elif sol_per_miner > 0.01:
-        penalty = 0.5  // Whale-dominated
-    elif sol_per_miner > 0.005:
-        penalty = 0.8  // Moderately concentrated
-    else:
-        penalty = 1.0  // Distributed competition
-    
-    ev_score = ev × penalty
+    // Apply miner distribution analysis
+    concentration_score = analyze_miner_distribution(block)
+    ev_score = ev × concentration_score
 
-// Select top 20 blocks by EV score
-selected_blocks = sort_by_ev_score(all_blocks)[0:20]
+// Select optimal blocks by EV score
+selected_blocks = rank_and_select(all_blocks, target_count)
 ```
 
 **Why This Matters:**
 
-Early versions used naive "lowest SOL" selection, which often chose whale-dominated blocks (e.g., one player staking 0.05 SOL alone). The EV-based system correctly identifies these as poor choices because:
-- Win probability is uniform (1/25)
-- Whale captures most of the rewards if that block wins
-- Better to choose evenly distributed blocks where we capture more share
+Naive "lowest SOL" selection often chose whale-dominated blocks with poor reward distribution. The EV-based system correctly identifies these as suboptimal because:
+- Win probability is uniform across all blocks
+- Concentrated blocks reduce proportional reward capture
+- Better to choose well-distributed blocks with favorable share dynamics
 
 ---
 
@@ -185,21 +172,21 @@ Early versions used naive "lowest SOL" selection, which often chose whale-domina
 
 ### RPC Rate Management
 
-**Challenge:** Helius Developer plan limits to 100 RPS with burst tolerance. Naive RPC usage caused throttling (429 errors) during T-3s execution burst.
+**Challenge:** Premium RPC services have rate limits. Naive RPC usage caused throttling during execution bursts.
 
 **Solution:** Custom token-bucket rate limiter:
 
 ```rust
 pub struct RpcRateLimiter {
     tokens: Arc<RwLock<f64>>,
-    max_tokens: f64,          // 30 (burst capacity)
-    refill_rate: f64,         // 10 per second (sustained)
+    max_tokens: f64,          // Burst capacity
+    refill_rate: f64,         // Sustained rate
     last_refill: Arc<RwLock<Instant>>,
 }
 ```
 
-- **Sustained:** 10 RPS for background polling
-- **Burst:** 30 tokens for T-3s execution spike
+- **Sustained rate:** Configured for background polling
+- **Burst capacity:** Allows execution spikes
 - **Async-aware:** Non-blocking token acquisition with Tokio
 - **Result:** Zero throttling over 1000+ production rounds
 
@@ -208,11 +195,11 @@ pub struct RpcRateLimiter {
 **Problem:** If the bot skips rounds (e.g., low EV), the on-chain miner state (`miner.round_id`) falls behind the blockchain. Next execution requires 30-second checkpoint catch-up, causing 86-second cycles instead of 60s.
 
 **Solution:**
-1. **Never skip rounds:** Even in negative EV scenarios, deploy minimal stake (0.004 SOL × 20 blocks)
+1. **Minimize round skipping:** Deploy even in suboptimal conditions to maintain sync
 2. **Atomic checkpoint+deploy:** Every transaction updates miner state
 3. **Preflight validation:** Check miner is current before execution
 
-**Result:** 54-60s consistent cycle times, <2% missed rounds
+**Result:** Consistent 60-second cycle times, <2% missed rounds
 
 ### Corrupted Timing Data Handling
 
@@ -233,13 +220,12 @@ Validate all timing data before calculations, fail gracefully, and retry on next
 ## Performance Metrics
 
 ```
-Execution Speed:        1.2s avg confirmation (T-3s timing)
-Uptime:                 99.8% (8 failures in 1000+ rounds)
-Missed Rounds:          <2% (down from 15-20% in v1)
-Cycle Consistency:      54-60s (vs 86s with checkpoint issues)
-Capital Deployed:       ~$47K/day (293 SOL at $160/SOL)
-Adaptability Range:     Handles 3x competition swings automatically
-RPC Throttling:         0 errors (with custom rate limiter)
+Execution Speed:        Sub-2s average confirmation
+Uptime:                 99.8% over 1000+ production rounds
+Missed Rounds:          <2% (significantly improved from early versions)
+Cycle Consistency:      Consistent 60-second cycles
+Adaptability Range:     Handles 3x+ competition swings automatically
+RPC Throttling:         0 errors with custom rate limiter
 ```
 
 **Current Trade-off:**
